@@ -21,10 +21,10 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 //start kitbot additions
 import frc.robot.Constants.LauncherConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
+//import frc.robot.commands.Autos;
 import frc.robot.commands.LaunchNote;
 import frc.robot.commands.PrepareLaunch;
-import frc.robot.subsystems.CANDrivetrain;
+//import frc.robot.subsystems.CANDrivetrain;
 import frc.robot.subsystems.CANLauncher;
 // import frc.robot.subsystems.PWMDrivetrain;
 // import frc.robot.subsystems.PWMLauncher;
