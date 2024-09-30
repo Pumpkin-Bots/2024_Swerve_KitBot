@@ -16,13 +16,44 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+//import frc.robot.subsystems.PWMDrivetrain;
+//import frc.robot.subsystems.PWMLauncher;
+//start kitbot additions
+import frc.robot.Constants.LauncherConstants;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.LaunchNote;
+import frc.robot.commands.PrepareLaunch;
+import frc.robot.subsystems.CANDrivetrain;
+import frc.robot.subsystems.CANLauncher;
+// import frc.robot.subsystems.PWMDrivetrain;
+// import frc.robot.subsystems.PWMLauncher;
+
 
 public class RobotContainer {
+//start kitbot additions
+// private final PWMDrivetrain m_drivetrain = new PWMDrivetrain();
+private final CANDrivetrain m_drivetrain = new CANDrivetrain();
+// private final PWMLauncher m_launcher = new PWMLauncher();
+private final CANLauncher m_launcher = new CANLauncher();
+//end kitbot additions
+
+
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
+  
+  //start kitbot addition
+  //commenting out drive controller since already put in swerve code
+  //private final CommandXboxController m_driverController =
+  //new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // this is for joystick for operator
+  private final CommandXboxController m_operatorController =
+  new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+  //end kitbot addition
+
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -53,6 +84,25 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(logger::telemeterize);
+
+//start kitbot additions
+//need to resolve that both sets of code use left bumper
+
+ /*Create an inline sequence to run when the operator presses and holds the A (green) button. Run the PrepareLaunch
+     * command for 1 seconds and then run the LaunchNote command */
+    m_operatorController
+        .a()
+        .whileTrue(
+            new PrepareLaunch(m_launcher)
+                .withTimeout(LauncherConstants.kLauncherDelay)
+                .andThen(new LaunchNote(m_launcher))
+                .handleInterrupt(() -> m_launcher.stop()));
+
+    // Set up a binding to run the intake command while the operator is pressing and holding the
+    // left Bumper
+    m_operatorController.leftBumper().whileTrue(m_launcher.getIntakeCommand());
+ //end kitbot additions
+
   }
 
   public RobotContainer() {
