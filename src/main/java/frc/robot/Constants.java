@@ -18,6 +18,8 @@ public final class Constants {
     // tab of the DriverStation
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
+    public static final String kSingleControllerMode = "Single";
+    public static final String kDualControllerMode = "Dual";
   }
 
   public static class DrivetrainConstants {
