@@ -18,6 +18,7 @@ public final class Constants {
     // tab of the DriverStation
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
+    public static final boolean isOneControllerDriving = true;
   }
 
   public static class DrivetrainConstants {
