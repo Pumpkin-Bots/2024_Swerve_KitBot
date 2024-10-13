@@ -74,6 +74,8 @@ private final CANLauncher m_launcher = new CANLauncher();
     SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
     String selectedMode = controllerModeChooser.getSelected(); // Get the currently selected mode
     System.out.printf(String.format("Controller mode selected: %s", selectedMode));
+
+    boolean isOneControllerDriving = selectedMode == OperatorConstants.kSingleControllerMode;
     
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
@@ -99,7 +101,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
  /*Create an inline sequence to run when the operator presses and holds the A (green) button. Run the PrepareLaunch
      * command for 1 seconds and then run the LaunchNote command */
-    if(OperatorConstants.isOneControllerDriving){
+    if(isOneControllerDriving){
       joystick
           .x()
           .whileTrue(
@@ -120,7 +122,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
-    if(OperatorConstants.isOneControllerDriving){
+    if(isOneControllerDriving){
         m_operatorController.y().whileTrue(m_launcher.getIntakeCommand());
     } else {
         m_operatorController.y().whileTrue(m_launcher.getIntakeCommand());
