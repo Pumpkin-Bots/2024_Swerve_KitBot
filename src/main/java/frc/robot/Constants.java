@@ -13,12 +13,18 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class SmartDashboardConstants {
+    public static final String kControllerMode = "controller_mode";
+  }
+
   public static class OperatorConstants {
     // Port numbers for driver and operator gamepads. These correspond with the numbers on the USB
     // tab of the DriverStation
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
     public static final boolean isOneControllerDriving = true;
+    public static final String kSingleControllerMode = "Single";
+    public static final String kDualControllerMode = "Dual";
   }
 
   public static class DrivetrainConstants {
