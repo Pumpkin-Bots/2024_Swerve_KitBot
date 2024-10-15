@@ -32,16 +32,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
-    ControllerConfigMode selectedMode = ControllerConfigMode.fromString(controllerModeChooser.getSelected()); // Get the currently selected mode
-    
-    // Compare to previously selected value and remap bindings only if value changed or if not previously set
-    if (selectedMode != m_controllerModeSelected) {
-      System.out.printf(String.format("Controller mode selected: %s", selectedMode));
-      selectedMode = m_controllerModeSelected;
-      m_robotContainer.configureBindings(selectedMode);
-
-    }
+    maybeUpdateControllerBindings();
     CommandScheduler.getInstance().run(); 
   }
 
@@ -95,4 +86,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
+
+  private void maybeUpdateControllerBindings() {
+    SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
+    ControllerConfigMode selectedMode = ControllerConfigMode.fromString(controllerModeChooser.getSelected()); // Get the currently selected mode
+    
+    // Compare to previously selected value and remap bindings only if value changed or if not previously set
+    if (selectedMode != m_controllerModeSelected) {
+      System.out.printf(String.format("Controller mode selected: %s", selectedMode));
+      selectedMode = m_controllerModeSelected;
+      m_robotContainer.configureBindings(selectedMode);
+
+    }
+  }
 }
