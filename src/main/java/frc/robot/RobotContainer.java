@@ -36,7 +36,7 @@ import frc.robot.subsystems.CANLauncher;
 
 public class RobotContainer {
   // Choose if we want to use single or dual XBOX Controller Mode
-  public ControllerConfigMode m_controllerModeSelected;
+  private ControllerConfigMode m_controllerModeSelected;
   private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
 
 //start kitbot additions
@@ -139,8 +139,9 @@ private final CANLauncher m_launcher = new CANLauncher();
   }
 
   public void maybeUpdateControllerBindings() {
+    // Get the currently selected mode
     SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
-    ControllerConfigMode selectedMode = ControllerConfigMode.fromString(controllerModeChooser.getSelected()); // Get the currently selected mode
+    ControllerConfigMode selectedMode = ControllerConfigMode.fromString(controllerModeChooser.getSelected()); 
     
     // Compare to previously selected value and remap bindings only if value changed or if not previously set
     if (selectedMode != m_controllerModeSelected) {
