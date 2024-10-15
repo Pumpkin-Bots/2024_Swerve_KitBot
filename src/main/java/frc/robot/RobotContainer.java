@@ -11,6 +11,8 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,6 +24,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Constants.LauncherConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.OperatorConstants.ControllerConfigMode;
+import frc.robot.Constants.SmartDashboardConstants;
 //import frc.robot.commands.Autos;
 import frc.robot.commands.LaunchNote;
 import frc.robot.commands.PrepareLaunch;
@@ -32,6 +35,10 @@ import frc.robot.subsystems.CANLauncher;
 
 
 public class RobotContainer {
+  // Choose if we want to use single or dual XBOX Controller Mode
+  public ControllerConfigMode m_controllerModeSelected;
+  private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
+
 //start kitbot additions
 // private final PWMDrivetrain m_drivetrain = new PWMDrivetrain();
 //private final CANDrivetrain m_drivetrain = new CANDrivetrain();
@@ -66,7 +73,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  public void configureBindings(ControllerConfigMode mode) {
+  private void configureBindings(ControllerConfigMode mode) {
     boolean isOneControllerDriving = mode == OperatorConstants.ControllerConfigMode.SINGLE;
     
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
@@ -123,9 +130,29 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   }
 
-  public RobotContainer() {}
+  public RobotContainer() {
+    configureSmartDashboardOptions();
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public void maybeUpdateControllerBindings() {
+    SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
+    ControllerConfigMode selectedMode = ControllerConfigMode.fromString(controllerModeChooser.getSelected()); // Get the currently selected mode
+    
+    // Compare to previously selected value and remap bindings only if value changed or if not previously set
+    if (selectedMode != m_controllerModeSelected) {
+      System.out.printf(String.format("Controller mode selected: %s", selectedMode));
+      selectedMode = m_controllerModeSelected;
+      configureBindings(selectedMode);
+    }
+  }
+
+  private void configureSmartDashboardOptions() {
+    m_controllerModeChooser.setDefaultOption("Single Controller", OperatorConstants.ControllerConfigMode.SINGLE.toString());
+    m_controllerModeChooser.addOption("Dual Controller", OperatorConstants.ControllerConfigMode.DUAL.toString());
+    SmartDashboard.putData("controller_mode", m_controllerModeChooser);
   }
 }

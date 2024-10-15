@@ -18,21 +18,14 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  // Choose if we want to use single or dual XBOX Controller Mode
-  public ControllerConfigMode m_controllerModeSelected;
-  private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
-
   @Override
   public void robotInit() {
-    m_controllerModeChooser.setDefaultOption("Single Controller", OperatorConstants.ControllerConfigMode.SINGLE.toString());
-    m_controllerModeChooser.addOption("Dual Controller", OperatorConstants.ControllerConfigMode.DUAL.toString());
-    SmartDashboard.putData("controller_mode", m_controllerModeChooser);
     m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
-    maybeUpdateControllerBindings();
+    m_robotContainer.maybeUpdateControllerBindings();
     CommandScheduler.getInstance().run(); 
   }
 
@@ -86,17 +79,4 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
-
-  private void maybeUpdateControllerBindings() {
-    SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
-    ControllerConfigMode selectedMode = ControllerConfigMode.fromString(controllerModeChooser.getSelected()); // Get the currently selected mode
-    
-    // Compare to previously selected value and remap bindings only if value changed or if not previously set
-    if (selectedMode != m_controllerModeSelected) {
-      System.out.printf(String.format("Controller mode selected: %s", selectedMode));
-      selectedMode = m_controllerModeSelected;
-      m_robotContainer.configureBindings(selectedMode);
-
-    }
-  }
 }
