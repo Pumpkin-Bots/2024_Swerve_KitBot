@@ -24,6 +24,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 //start kitbot additions
 import frc.robot.Constants.LauncherConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.OperatorConstants.ControllerConfigMode;
 import frc.robot.Constants.SmartDashboardConstants;
 //import frc.robot.commands.Autos;
 import frc.robot.commands.LaunchNote;
@@ -69,13 +70,8 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private void configureBindings() {
-    // Assuming controllerMode is a SendableChooser
-    SendableChooser<String> controllerModeChooser = (SendableChooser<String>) SmartDashboard.getData(SmartDashboardConstants.kControllerMode);
-    String selectedMode = controllerModeChooser.getSelected(); // Get the currently selected mode
-    System.out.printf(String.format("Controller mode selected: %s", selectedMode));
-
-    boolean isOneControllerDriving = selectedMode == OperatorConstants.kSingleControllerMode;
+  public void configureBindings(ControllerConfigMode mode) {
+    boolean isOneControllerDriving = mode == OperatorConstants.ControllerConfigMode.SINGLE;
     
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
@@ -123,7 +119,7 @@ private final CANLauncher m_launcher = new CANLauncher();
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
     if(isOneControllerDriving){
-        m_operatorController.y().whileTrue(m_launcher.getIntakeCommand());
+        joystick.y().whileTrue(m_launcher.getIntakeCommand());
     } else {
         m_operatorController.y().whileTrue(m_launcher.getIntakeCommand());
     }
@@ -131,9 +127,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   }
 
-  public RobotContainer() {
-    configureBindings();
-  }
+  public RobotContainer() {}
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");

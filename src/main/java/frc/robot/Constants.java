@@ -22,8 +22,19 @@ public final class Constants {
     // tab of the DriverStation
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
-    public static final String kSingleControllerMode = "Single";
-    public static final String kDualControllerMode = "Dual";
+
+    public enum ControllerConfigMode {
+      SINGLE,
+      DUAL;
+
+      static ControllerConfigMode fromString(String mode) {
+        try {
+          return ControllerConfigMode.valueOf(mode.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid mode: " + mode);
+        }
+      }
+    }
   }
 
   public static class DrivetrainConstants {
