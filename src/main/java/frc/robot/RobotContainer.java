@@ -146,7 +146,7 @@ private final CANLauncher m_launcher = new CANLauncher();
     // Compare to previously selected value and remap bindings only if value changed or if not previously set
     if (selectedMode != m_controllerModeSelected) {
       System.out.printf(String.format("Controller mode selected: %s", selectedMode));
-      selectedMode = m_controllerModeSelected;
+      m_controllerModeSelected = selectedMode;
       configureBindings(selectedMode);
     }
   }
