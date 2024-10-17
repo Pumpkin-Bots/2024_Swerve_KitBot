@@ -5,31 +5,22 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.OperatorConstants;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
-  // Choose if we want to use single or dual XBOX Controller Mode
-  public String m_controllerModeSelected;
-  private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
-
   @Override
   public void robotInit() {
-    m_controllerModeChooser.setDefaultOption("Single Controller", OperatorConstants.kSingleControllerMode);
-    m_controllerModeChooser.addOption("Dual Controller", OperatorConstants.kDualControllerMode);
-    SmartDashboard.putData("controller_mode", m_controllerModeChooser);
     m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
+    m_robotContainer.maybeUpdateControllerBindings();
     CommandScheduler.getInstance().run(); 
   }
 
