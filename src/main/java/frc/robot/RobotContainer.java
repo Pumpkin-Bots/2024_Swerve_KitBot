@@ -87,8 +87,8 @@ private final CANLauncher m_launcher = new CANLauncher();
         ));
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    //joystick.b().whileTrue(drivetrain
+    //    .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -108,18 +108,28 @@ private final CANLauncher m_launcher = new CANLauncher();
           .x()
           .whileTrue(
               new PrepareLaunch(m_launcher)
-                  .withTimeout(LauncherConstants.kLauncherDelay)
-                  .andThen(new LaunchNote(m_launcher))
                   .handleInterrupt(() -> m_launcher.stop()));
-    }
-    else {
+    } else {
       m_operatorController
           .x()
           .whileTrue(
               new PrepareLaunch(m_launcher)
-                  .withTimeout(LauncherConstants.kLauncherDelay)
-                  .andThen(new LaunchNote(m_launcher))
                   .handleInterrupt(() -> m_launcher.stop()));
+    }
+
+    
+    if(isOneControllerDriving){
+      joystick
+          .b()
+          .whileTrue(
+              new LaunchNote(m_launcher)
+              .handleInterrupt(() -> m_launcher.stop()));
+    } else {
+      m_operatorController
+          .b()
+          .whileTrue(
+              new LaunchNote(m_launcher)
+              .handleInterrupt(() -> m_launcher.stop()));
     }
 
     // Set up a binding to run the intake command while the operator is pressing and holding the
