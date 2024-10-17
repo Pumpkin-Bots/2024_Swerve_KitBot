@@ -135,7 +135,6 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   public RobotContainer() {
     configureSmartDashboardOptions();
-    configureShuffleboardOptions();
   }
 
   public Command getAutonomousCommand() {
@@ -159,18 +158,5 @@ private final CANLauncher m_launcher = new CANLauncher();
     m_controllerModeChooser.setDefaultOption("Single Controller", OperatorConstants.ControllerConfigMode.SINGLE.toString());
     m_controllerModeChooser.addOption("Dual Controller", OperatorConstants.ControllerConfigMode.DUAL.toString());
     SmartDashboard.putData("controller_mode", m_controllerModeChooser);
-  }
-
-  private void configureShuffleboardOptions() {
-    // Add match play tab to Shuffleboard.
-    var matchPlayTab = Shuffleboard.getTab("Match Play");
-    matchPlayTab
-    .addCamera(
-        "Driver Camera",
-        "USB Camera 0",
-        "mjpg:http://roboRIO-8793-FRC.local:1181/?action=stream")
-    .withProperties(Map.of("showControls", false))
-    .withPosition(4, 0)
-    .withSize(15, 6);
   }
 }
