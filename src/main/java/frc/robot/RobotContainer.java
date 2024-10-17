@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -11,6 +13,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -132,6 +135,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   public RobotContainer() {
     configureSmartDashboardOptions();
+    configureShuffleboardOptions();
   }
 
   public Command getAutonomousCommand() {
@@ -155,5 +159,18 @@ private final CANLauncher m_launcher = new CANLauncher();
     m_controllerModeChooser.setDefaultOption("Single Controller", OperatorConstants.ControllerConfigMode.SINGLE.toString());
     m_controllerModeChooser.addOption("Dual Controller", OperatorConstants.ControllerConfigMode.DUAL.toString());
     SmartDashboard.putData("controller_mode", m_controllerModeChooser);
+  }
+
+  private void configureShuffleboardOptions() {
+    // Add match play tab to Shuffleboard.
+    var matchPlayTab = Shuffleboard.getTab("Match Play");
+    matchPlayTab
+    .addCamera(
+        "Driver Camera",
+        "USB Camera 0",
+        "mjpg:http://roboRIO-8793-FRC.local:1181/?action=stream")
+    .withProperties(Map.of("showControls", false))
+    .withPosition(4, 0)
+    .withSize(15, 6);
   }
 }
