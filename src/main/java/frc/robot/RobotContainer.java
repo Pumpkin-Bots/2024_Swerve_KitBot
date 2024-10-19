@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -13,18 +11,15 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 //import frc.robot.subsystems.PWMDrivetrain;
 //import frc.robot.subsystems.PWMLauncher;
 //start kitbot additions
-import frc.robot.Constants.LauncherConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.OperatorConstants.ControllerConfigMode;
 import frc.robot.Constants.SmartDashboardConstants;
@@ -72,7 +67,6 @@ private final CANLauncher m_launcher = new CANLauncher();
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -160,7 +154,14 @@ private final CANLauncher m_launcher = new CANLauncher();
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return new PrepareLaunch(m_launcher)
+        .withTimeout(2)
+        .andThen(new LaunchNote(m_launcher)
+        .withTimeout(1))
+        .andThen(drivetrain.applyRequest(() -> drive.withVelocityX(1))
+        .withTimeout(2))
+        ;
+  
   }
 
   public void maybeUpdateControllerBindings() {
