@@ -68,7 +68,7 @@ private final CANLauncher m_launcher = new CANLauncher();
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -80,15 +80,13 @@ private final CANLauncher m_launcher = new CANLauncher();
     boolean isOneControllerDriving = mode == OperatorConstants.ControllerConfigMode.SINGLE;
     
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * -joystick.getLeftY() * -joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(-joystick.getLeftX() * -joystick.getLeftX() * -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -108,18 +106,28 @@ private final CANLauncher m_launcher = new CANLauncher();
           .x()
           .whileTrue(
               new PrepareLaunch(m_launcher)
-                  .withTimeout(LauncherConstants.kLauncherDelay)
-                  .andThen(new LaunchNote(m_launcher))
                   .handleInterrupt(() -> m_launcher.stop()));
-    }
-    else {
+    } else {
       m_operatorController
           .x()
           .whileTrue(
               new PrepareLaunch(m_launcher)
-                  .withTimeout(LauncherConstants.kLauncherDelay)
-                  .andThen(new LaunchNote(m_launcher))
                   .handleInterrupt(() -> m_launcher.stop()));
+    }
+
+    
+    if(isOneControllerDriving){
+      joystick
+          .b()
+          .whileTrue(
+              new LaunchNote(m_launcher)
+              .handleInterrupt(() -> m_launcher.stop()));
+    } else {
+      m_operatorController
+          .b()
+          .whileTrue(
+              new LaunchNote(m_launcher)
+              .handleInterrupt(() -> m_launcher.stop()));
     }
 
     // Set up a binding to run the intake command while the operator is pressing and holding the
