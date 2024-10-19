@@ -68,7 +68,7 @@ private final CANLauncher m_launcher = new CANLauncher();
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -80,9 +80,9 @@ private final CANLauncher m_launcher = new CANLauncher();
     boolean isOneControllerDriving = mode == OperatorConstants.ControllerConfigMode.SINGLE;
     
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * -joystick.getLeftY() * -joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(-joystick.getLeftX() * -joystick.getLeftX() * -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
@@ -172,13 +172,13 @@ private final CANLauncher m_launcher = new CANLauncher();
   private void configureShuffleboardOptions() {
     // Add match play tab to Shuffleboard.
     var matchPlayTab = Shuffleboard.getTab("Match Play");
-    matchPlayTab
-    .addCamera(
-        "Driver Camera",
-        "USB Camera 0",
-        "mjpg:http://roboRIO-8793-FRC.local:1181/?action=stream")
-    .withProperties(Map.of("showControls", false))
-    .withPosition(4, 0)
-    .withSize(15, 6);
+    // matchPlayTab
+    // .addCamera(
+    //     "Driver Camera",
+    //     "USB Camera 0",
+    //     "mjpg:http://roboRIO-8793-frc.local:1181/?action=stream")
+    // .withProperties(Map.of("showControls", false))
+    // .withPosition(4, 0)
+    // .withSize(15, 6);
   }
 }
