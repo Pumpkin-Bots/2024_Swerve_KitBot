@@ -76,13 +76,27 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  /*
+   * adds an exponential curve to joystick from -1 to 1
+   * smoother at lower values, higher slope at higher values 
+   */
+  private double velocityCurveTranslate(double joystickInput){ 
+    if(joystickInput > 0){
+      return Math.pow(joystickInput, 2.1);
+    } else if (joystickInput < 0){
+      return -Math.pow(-joystickInput, 2.1);
+    } else {
+      return 0;
+    }
+  }
+
   private void configureBindings(ControllerConfigMode mode) {
     boolean isOneControllerDriving = mode == OperatorConstants.ControllerConfigMode.SINGLE;
     
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * -joystick.getLeftY() * -joystick.getLeftY() * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> drive.withVelocityX(-velocityCurveTranslate(joystick.getLeftY()) * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * -joystick.getLeftX() * -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(-velocityCurveTranslate(joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
