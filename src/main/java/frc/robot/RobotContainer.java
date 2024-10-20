@@ -153,13 +153,29 @@ private final CANLauncher m_launcher = new CANLauncher();
     configureSmartDashboardOptions();
   }
 
-  public Command getAutonomousCommand() {
+  public Command getAutonomousShootAndLeaveCommand() {
     return new PrepareLaunch(m_launcher)
         .withTimeout(2)
         .andThen(new LaunchNote(m_launcher)
         .withTimeout(1))
         .andThen(drivetrain.applyRequest(() -> drive.withVelocityX(1))
         .withTimeout(2))
+        ;
+  
+  }
+
+  public Command getAutonomousShootCommand() {
+    return new PrepareLaunch(m_launcher)
+        .withTimeout(2)
+        .andThen(new LaunchNote(m_launcher)
+        .withTimeout(1))
+        ;
+  
+  }
+
+  public Command getAutonomousLeaveCommand() {
+    return drivetrain.applyRequest(() -> drive.withVelocityX(1))
+        .withTimeout(2)
         ;
   
   }

@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -14,14 +16,28 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public static final String kAutoShootAndLeave = "kAutoShootAndLeave";
+  public static final String kAutoShoot = "kAutoShoot";
+  public static final String kAutoLeave = "kAutoLeave";
+  public static final String kAutoStay = "kAutoStay";
+  public String m_autoSelected;
+  public final SendableChooser<String> m_chooser = new SendableChooser<>();
+
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
     CameraServer.startAutomaticCapture().setResolution(480, 320);
+
+    m_chooser.setDefaultOption("Stay", kAutoStay);
+    m_chooser.addOption("Shoot", kAutoShoot);
+    m_chooser.addOption("Leave", kAutoLeave);
+    m_chooser.addOption("Shoot and Leave", kAutoShootAndLeave);
+    SmartDashboard.putData("Auto choices", m_chooser);
   }
 
   @Override
   public void robotPeriodic() {
+    m_autoSelected = m_chooser.getSelected();
     m_robotContainer.maybeUpdateControllerBindings();
     CommandScheduler.getInstance().run(); 
   }
@@ -37,7 +53,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    switch (m_autoSelected) {
+      case kAutoShootAndLeave:
+        m_autonomousCommand = m_robotContainer.getAutonomousShootAndLeaveCommand();
+      
+        break;
+      case kAutoShoot:
+        m_autonomousCommand = m_robotContainer.getAutonomousShootCommand();
+      
+        break;
+      case kAutoLeave:
+        m_autonomousCommand = m_robotContainer.getAutonomousLeaveCommand();
+
+        break;
+      default:
+        m_autonomousCommand = null;
+
+        break;
+    }
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
