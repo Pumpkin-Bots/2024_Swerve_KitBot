@@ -49,7 +49,7 @@ private final CANLauncher m_launcher = new CANLauncher();
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
-  private final CommandXboxController joystick = new CommandXboxController(OperatorConstants.kOperatorControllerPort); // My joystick
+  private final CommandXboxController joystick = new CommandXboxController(OperatorConstants.kDriverControllerPort); // My joystick
   
   //start kitbot addition
   //commenting out drive controller since already put in swerve code
