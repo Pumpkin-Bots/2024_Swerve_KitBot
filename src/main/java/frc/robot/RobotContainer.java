@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -30,12 +31,21 @@ import frc.robot.commands.PrepareLaunch;
 import frc.robot.subsystems.CANLauncher;
 // import frc.robot.subsystems.PWMDrivetrain;
 // import frc.robot.subsystems.PWMLauncher;
+import frc.robot.subsystems.CANdleSystem;
+
+
 
 
 public class RobotContainer {
   // Choose if we want to use single or dual XBOX Controller Mode
   private ControllerConfigMode m_controllerModeSelected;
   private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
+
+  double tx = LimelightHelpers.getTX("");
+  
+
+
+
 
 //start kitbot additions
 // private final PWMDrivetrain m_drivetrain = new PWMDrivetrain();
@@ -70,10 +80,14 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  CANdleSystem CANdle = new CANdleSystem(joystick);
+
+
   /*
    * adds an exponential curve to joystick from -1 to 1
    * smoother at lower values, higher slope at higher values 
    */
+  
   private double velocityCurveTranslate(double joystickInput){ 
     if(joystickInput > 0){
       return Math.pow(joystickInput, 2.1);
@@ -86,12 +100,24 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   private void configureBindings(ControllerConfigMode mode) {
     boolean isOneControllerDriving = mode == OperatorConstants.ControllerConfigMode.SINGLE;
-    
+    /* 
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-velocityCurveTranslate(joystick.getLeftY()) * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(-velocityCurveTranslate(joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            .withRotationalRate(joystick.getRightX() * MaxAngularRate + LimelightHelpers.getTX("") * 0.1
+            ) // Drive counterclockwise with negative X (left)
+        ));
+
+        above follows target rotationally using limelight commands
+
+        */
+    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+        drivetrain.applyRequest(() -> drive.withVelocityX(-velocityCurveTranslate(joystick.getLeftY()) * MaxSpeed) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(-velocityCurveTranslate(joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(joystick.getRightX() * MaxAngularRate
+            ) // Drive counterclockwise with negative X (left)
         ));
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -103,6 +129,8 @@ private final CANLauncher m_launcher = new CANLauncher();
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    joystick.rightBumper().onTrue(CANdle.getChangeAnimationCommand());
 
 //start kitbot additions
 //need to resolve that both sets of code use left bumper
@@ -146,8 +174,10 @@ private final CANLauncher m_launcher = new CANLauncher();
         m_operatorController.y().whileTrue(m_launcher.getIntakeCommand());
     }
  //end kitbot additions
+    
 
   }
+  
 
   public RobotContainer() {
     configureSmartDashboardOptions();
@@ -155,9 +185,9 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   public Command getAutonomousShootAndLeaveCommand() {
     return new PrepareLaunch(m_launcher)
-        .withTimeout(2)
+        .withTimeout(5)
         .andThen(new LaunchNote(m_launcher)
-        .withTimeout(1))
+        .withTimeout(7))
         .andThen(drivetrain.applyRequest(() -> drive.withVelocityX(1))
         .withTimeout(2))
         ;
@@ -166,7 +196,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   public Command getAutonomousShootCommand() {
     return new PrepareLaunch(m_launcher)
-        .withTimeout(2)
+        .withTimeout(5)
         .andThen(new LaunchNote(m_launcher)
         .withTimeout(1))
         ;
@@ -192,6 +222,7 @@ private final CANLauncher m_launcher = new CANLauncher();
       configureBindings(selectedMode);
     }
   }
+
 
   private void configureSmartDashboardOptions() {
     m_controllerModeChooser.setDefaultOption("Single Controller", OperatorConstants.ControllerConfigMode.SINGLE.toString());

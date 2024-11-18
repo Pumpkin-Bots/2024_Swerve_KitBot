@@ -45,7 +45,7 @@ public final class Constants {
     public static final int kRightFrontID = 4;
 
     // Current limit for drivetrain motors
-    public static final int kCurrentLimit = 60;
+    public static final double kCurrentLimit = 80.0;
   }
 
   public static class LauncherConstants {
@@ -65,5 +65,8 @@ public final class Constants {
     public static final double kIntakeFeederSpeed = .2; // -.2
 
     public static final double kLauncherDelay = 1;
+  }
+  public static class CANdleConstants{
+    public static final int kCANdleID = 17;
   }
 }
