@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
@@ -63,7 +63,20 @@ public class CANdleSystem extends SubsystemBase {
             () -> {
               
             });
-      }
+    }
+    public Command getSetAnimationCommand(AnimationTypes toChange) {
+        // The startEnd helper method takes a method to call when the command is initialized and one to
+        // call when it ends
+        return this.startEnd(
+            // When the command is initialized, set the wheels to the intake speed values
+            () -> {
+              changeAnimation(toChange);
+            },
+            // When the command stops, stop the wheels
+            () -> {
+              
+            });
+    }
 
     public void incrementAnimation() {
         switch(m_currentAnimation) {
@@ -115,7 +128,7 @@ public class CANdleSystem extends SubsystemBase {
         switch(toChange)
         {
             case ColorFlow:
-                m_toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, LedCount, Direction.Forward);
+                m_toAnimate = new ColorFlowAnimation(255, 20, 0, 0, 0.7, LedCount, Direction.Forward);
                 break;
             case Fire:
                 m_toAnimate = new FireAnimation(0.5, 0.7, LedCount, 0.7, 0.5);
@@ -133,7 +146,7 @@ public class CANdleSystem extends SubsystemBase {
                 m_toAnimate = new SingleFadeAnimation(50, 2, 200, 0, 0.5, LedCount);
                 break;
             case Strobe:
-                m_toAnimate = new StrobeAnimation(240, 10, 180, 0, 98.0 / 256.0, LedCount);
+                m_toAnimate = new StrobeAnimation(255, 20, 0, 0, 98.0 / 256.0, LedCount);
                 break;
             case Twinkle:
                 m_toAnimate = new TwinkleAnimation(30, 70, 60, 0, 0.4, LedCount, TwinklePercent.Percent6);
@@ -151,14 +164,31 @@ public class CANdleSystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        if(m_toAnimate == null) {
-            m_candle.setLEDs((int)(joystick.getLeftTriggerAxis() * 255), 
-                              (int)(joystick.getRightTriggerAxis() * 255), 
-                              (int)(joystick.getLeftX() * 255));
-        } else {
-            m_candle.animate(m_toAnimate);
+        //if(m_toAnimate == null) {
+        //    m_candle.setLEDs((int)(joystick.getLeftTriggerAxis() * 255), 
+        //                      (int)(joystick.getRightTriggerAxis() * 255), 
+        //                      (int)(joystick.getLeftX() * 255));
+        //} else {
+        //    m_candle.animate(m_toAnimate);
+        //}
+        //m_candle.modulateVBatOutput(joystick.getRightY());
+        if (joystick.rightBumper().getAsBoolean()){
+            if (LimelightHelpers.getTV("")){
+                changeAnimation(AnimationTypes.Strobe);
+            }
+            else {
+                changeAnimation(AnimationTypes.Fire);
+            }
         }
-        m_candle.modulateVBatOutput(joystick.getRightY());
+        else {
+            changeAnimation(AnimationTypes.Larson);
+        }
+
+
+
+        m_candle.animate(m_toAnimate);
+
+
     }
 
     @Override

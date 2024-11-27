@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -42,11 +41,11 @@ public class RobotContainer {
   private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
 
   double tx = LimelightHelpers.getTX("");
+
   
 
 
-
-
+  
 //start kitbot additions
 // private final PWMDrivetrain m_drivetrain = new PWMDrivetrain();
 //private final CANDrivetrain m_drivetrain = new CANDrivetrain();
@@ -82,7 +81,7 @@ private final CANLauncher m_launcher = new CANLauncher();
 
   CANdleSystem CANdle = new CANdleSystem(joystick);
 
-
+  
   /*
    * adds an exponential curve to joystick from -1 to 1
    * smoother at lower values, higher slope at higher values 
@@ -112,9 +111,18 @@ private final CANLauncher m_launcher = new CANLauncher();
         above follows target rotationally using limelight commands
 
         */
+    joystick.rightBumper().whileTrue(
+      drivetrain.applyRequest(() -> drive.withVelocityX(-velocityCurveTranslate(joystick.getLeftY()) * MaxSpeed) // Drive forward with
+                                                                                          // negative Y (forward)
+            .withVelocityY(-velocityCurveTranslate(joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(joystick.getRightX() * MaxAngularRate + (LimelightHelpers.getTX("") * 0.15)
+            ) // Drive counterclockwise with negative X (left)
+        ));
+        
+    
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-velocityCurveTranslate(joystick.getLeftY()) * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
+                                                                                          // negative Y (forward)
             .withVelocityY(-velocityCurveTranslate(joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(joystick.getRightX() * MaxAngularRate
             ) // Drive counterclockwise with negative X (left)
@@ -130,7 +138,7 @@ private final CANLauncher m_launcher = new CANLauncher();
     }
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    joystick.rightBumper().onTrue(CANdle.getChangeAnimationCommand());
+    //joystick.button(8).whileTrue(CANdle.getChangeAnimationCommand()); // menu button (3 lines)    
 
 //start kitbot additions
 //need to resolve that both sets of code use left bumper
@@ -142,7 +150,7 @@ private final CANLauncher m_launcher = new CANLauncher();
           .x()
           .whileTrue(
               new PrepareLaunch(m_launcher)
-                  .handleInterrupt(() -> m_launcher.stop()));
+                  .handleInterrupt(() -> m_launcher.stop()));              
     } else {
       m_operatorController
           .x()
