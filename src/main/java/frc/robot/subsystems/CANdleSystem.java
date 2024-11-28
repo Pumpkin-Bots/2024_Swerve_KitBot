@@ -181,7 +181,7 @@ public class CANdleSystem extends SubsystemBase {
             }
         }
         else {
-            changeAnimation(AnimationTypes.Larson);
+            changeAnimation(AnimationTypes.RgbFade);
         }
 
 

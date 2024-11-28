@@ -41,6 +41,7 @@ public class RobotContainer {
   private final SendableChooser<String> m_controllerModeChooser = new SendableChooser<>();
 
   double tx = LimelightHelpers.getTX("");
+  
 
   
 
@@ -115,7 +116,7 @@ private final CANLauncher m_launcher = new CANLauncher();
       drivetrain.applyRequest(() -> drive.withVelocityX(-velocityCurveTranslate(joystick.getLeftY()) * MaxSpeed) // Drive forward with
                                                                                           // negative Y (forward)
             .withVelocityY(-velocityCurveTranslate(joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(joystick.getRightX() * MaxAngularRate + (LimelightHelpers.getTX("") * 0.15)
+            .withRotationalRate(joystick.getRightX() * MaxAngularRate + (LimelightHelpers.getTX("") * 0.1)
             ) // Drive counterclockwise with negative X (left)
         ));
         
