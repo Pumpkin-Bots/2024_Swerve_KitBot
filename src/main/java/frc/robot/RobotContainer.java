@@ -76,7 +76,7 @@ private final CANLauncher m_launcher = new CANLauncher();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
    /* Path follower */
-  public Command runAuto = drivetrain.getAutoPath("AutoTest");
+  //public Command runAuto = drivetrain.getAutoPath("AutoTest");
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
