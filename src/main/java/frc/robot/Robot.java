@@ -98,9 +98,11 @@ public class Robot extends TimedRobot {
         break;
     }
 
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    //if (m_autonomousCommand != null) {
+    //  m_autonomousCommand.schedule();
+    //}
+    m_robotContainer.runAuto.schedule();
+    
   }
 
   @Override
