@@ -1,5 +1,12 @@
 {
-  "version": "2025.0",
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 2.883271729453586,
+      "y": 6.0
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -7,13 +14,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NewPath"
+            "pathName": "PathOne"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }
