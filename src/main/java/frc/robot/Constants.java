@@ -46,6 +46,10 @@ public final class Constants {
 
     // Current limit for drivetrain motors
     public static final double kCurrentLimit = 80.0;
+
+    // Speed limiter for demo bot to slow it down
+    // 1.0 = full speed, .5 = 50% max speed
+    public static final double kSpeedLimit = 1; 
   }
 
   public static class LauncherConstants {
